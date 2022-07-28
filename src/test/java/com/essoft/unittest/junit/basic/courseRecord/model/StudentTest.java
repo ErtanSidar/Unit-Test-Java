@@ -1,7 +1,5 @@
 package com.essoft.unittest.junit.basic.courseRecord.model;
 
-import com.essoft.unittest.courseRecord.model.LecturerCourseRecord;
-import com.essoft.unittest.courseRecord.model.Student;
 import org.junit.jupiter.api.*;
 
 import java.time.Duration;

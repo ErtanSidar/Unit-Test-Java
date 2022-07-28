@@ -1,6 +1,5 @@
 package com.essoft.unittest.junit.basic.courseRecord.model;
 
-import com.essoft.unittest.courseRecord.model.Student;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.*;
 
