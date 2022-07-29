@@ -1,35 +1,31 @@
 # Unit Test Java
 The most actual and most used unit testing tools and usage for Java projects
 
-### JUnit 5 = JUnit Platform + JUnit Jupiter + JUnit Vintage
+**To clone the project;**
+```git clone https://github.com/ErtanSidar/Unit-Test-Java.git```
+
 A first test case
 ```
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import example.util.Calculator;
-
-import org.junit.jupiter.api.Test;
-
 class MyFirstJUnitJupiterTests {
 
     private final Calculator calculator = new Calculator();
 
     @Test
     void addition() {
-        assertEquals(2, calculator.add(1, 1));
+        // Returns true if the first parameter is equal to the second parameter, and the test runs
+        assertEquals(2, calculator.add(1, 1)); 
     }
 
+}
+
+class Calculator {
+    public int add(int num1, int num2) {
+        return num1+num2;    
+    }
 }
 ```
 We can create our own test annotation, like @Tag("fast")
 ```
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-import org.junit.jupiter.api.Tag;
-
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Tag("fast")
@@ -44,78 +40,125 @@ void myFastTest() {
     // ...
 }
 ```
-A standard test class
-| Annotation     | Description |
-| ----------- | ----------- |
-| @Test      | Denotes that a method is a test method. Unlike JUnit 4’s @Test annotation, this annotation does not declare any attributes, since test extensions in JUnit Jupiter operate based on their own dedicated annotations. Such methods are inherited unless they are overridden.      |
-| @ParameterizedTest   | Denotes that a method is a parameterized test. Such methods are inherited unless they are overridden.       |
-| @RepeatedTest      | Denotes that a method is a test template for a repeated test. Such methods are inherited unless they are overridden.       |
-| @TestFactory   | Denotes that a method is a test factory for dynamic tests. Such methods are inherited unless they are overridden.        |
-| @DisplayName      | Declares a custom display name for the test class or test method. Such annotations are not inherited.       |
-| @BeforeEach  |Denotes that the annotated method should be executed before each @Test, @RepeatedTest, @ParameterizedTest, or @TestFactory method in the current class; analogous to JUnit 4’s @Before. Such methods are inherited – unless they are overridden or superseded (i.e., replaced based on signature only, irrespective of Java’s visibility rules).       |
-| @AfterEach      | Denotes that the annotated method should be executed after each @Test, @RepeatedTest, @ParameterizedTest, or @TestFactory method in the current class; analogous to JUnit 4’s @After. Such methods are inherited – unless they are overridden or superseded (i.e., replaced based on signature only, irrespective of Java’s visibility rules).      |
-| @BeforeAll   | Denotes that the annotated method should be executed before all @Test, @RepeatedTest, @ParameterizedTest, and @TestFactory methods in the current class; analogous to JUnit 4’s @BeforeClass. Such methods are inherited – unless they are hidden, overridden, or superseded, (i.e., replaced based on signature only, irrespective of Java’s visibility rules) – and must be static unless the "per-class" test instance lifecycle is used.      |
-| @Nested     | Denotes that the annotated class is a non-static nested test class. On Java 8 through Java 15, @BeforeAll and @AfterAll methods cannot be used directly in a @Nested test class unless the "per-class" test instance lifecycle is used. Beginning with Java 16, @BeforeAll and @AfterAll methods can be declared as static in a @Nested test class with either test instance lifecycle mode. Such annotations are not inherited.      |
-| @Tag  | Used to declare tags for filtering tests, either at the class or method level; analogous to test groups in TestNG or Categories in JUnit 4. Such annotations are inherited at the class level but not at the method level.        |
-| @Disabled     | Used to disable a test class or test method; analogous to JUnit 4’s @Ignore. Such annotations are not inherited.      |
+## Assertions 
+* assertTrue(boolean contition) => Asserts that a condition is true.
+* assertFalse(boolean contition) => Asserts that a condition is false.
+* assertNull(Object object) => Asserts that an object is null.
+* assertNotNull(Object object) => Asserts that an object isn’t null.
+* assertEquals(Object object1, Object object2) => Asserts that two objects are equal.
+* assertSame(Object object1, Object object2) => Asserts that two objects refer to the same object.
+* assertNotSame(Object object1, Object object2) => Asserts that two objects dont refer to the same object.
+* assertArrayEquals(Array array1, Array array2) => Asserts that two arrays are equal.
 ```
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
+        Student ertan = new Student("1","Ertan","Sidar");
+        
+        // assertEquals
+        // checking if two objects are equal
+        assertEquals("Ertan",ertan.getName());
+        
+        // assertEquals
+        // checking if two objects are equal with message
+        assertEquals("Ertan",ertan.getName(),"Student's name");
+        
+        // assertNotEquals
+        // checking if two objects are not equal
+        assertNotEquals("Ertann",ertan.getName(),"Student's name");
+        
+        // assertTrue
+        // checking if a condition is true
+        assertTrue(ertan.getName().startsWith("E"));
+        
+        // assertTrue
+        assertTrue(ertan.getName().startsWith("E"), ()->"Student's name "+" starts with E");
+        
+        // assertFalse
+        // checking if a condition is false
+        assertFalse(()-> {
+            Student mehmet = new Student("id1","Mehmet","Can");
+            return mehmet.getName().endsWith("M");
+        },()->"Student's name"+"ends with M");
+        
+        final Student ahmet = new Student("2","Ahmet","Yılmaz");
+        
+        // assertArrayEquals
+        // checking if two arrays are the equal
+        assertArrayEquals(new String []{"Ertan","Ahmet"}, Stream.of(ertan,ahmet).map(Student::getName).toArray());
+        
+        Student student=ertan;
+        
+        // assertSame
+        // checking if two objects references point the same object
+        assertSame(ertan,student);
+        
+        // assertNotSame
+        // checking if two objects references don't point the same object
+        assertNotSame(ahmet,student);
+        
+        Student ertan = new Student("1", "Ertan", "Sidar");
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+        // In a grouped assertion all assertions are executed,
+        // and any failures will be reported together.
+        assertAll("Student's name check",
+                () -> assertEquals("Ertan", ertan.getName()),
+                () -> assertEquals("Ertan", ertan.getName(), "Student's name"),
+                () -> assertNotEquals("Ertann", ertan.getName(), "Student's name")
+        );
 
-class StandardTests {
+```
+## A standard test class
+* @BeforeAll => Run before all tests and run once
+* @AfterAll => Run after all tests and run once
+* @BeforeEach => Run before each test
+* @AfterEach => Run after each test
+* @Disabled() => The method is disabled
+```
+public class StandartTestClass {
+
+    private static String oneInstancePerClass;
+    private Integer onInstancePerMethod;
 
     @BeforeAll
     static void initAll() {
+        oneInstancePerClass=String.valueOf(new Random().nextInt());
+        System.out.println("Init Before All Test Method");
     }
-
-    @BeforeEach
-    void init() {
-    }
-
-    @Test
-    void succeedingTest() {
-    }
-
-    @Test
-    void failingTest() {
-        fail("a failing test");
-    }
-
-    @Test
-    @Disabled("for demonstration purposes")
-    void skippedTest() {
-        // not executed
-    }
-
-    @Test
-    void abortedTest() {
-        assumeTrue("abc".contains("Z"));
-        fail("test should have been aborted");
-    }
-
-    @AfterEach
-    void tearDown() {
-    }
-
     @AfterAll
     static void tearDownAll() {
+        oneInstancePerClass=null;
+        System.out.println("Tear Down After All Test Method");
     }
-
+    @BeforeEach
+    void init() {
+        onInstancePerMethod=new Random().nextInt();
+        System.out.println("Init Before Each Test Method");
+    }
+    @AfterEach
+    void tearDown() {
+        oneInstancePerClass=null;
+        System.out.println("Tear Down After Each Test Method");
+    }
+    @Test
+    void testSomething1() {
+        System.out.println("Test: testSomething1 :"+onInstancePerMethod+":"+oneInstancePerClass);
+    }
+    @Test
+    void testSomething2() {
+        System.out.println("Test: testSomething2 :"+onInstancePerMethod+":"+oneInstancePerClass);
+    }
+    @Test
+    @Disabled("This test is not in scope for now")
+    void testSomething3() {
+        System.out.println("Test: testSomething3");
+    }
+    @Test
+    void testSomethingToFail() {
+        Assertions.fail("A failing test...");
+    }
 }
 ```
 ## Display Names
 Test classes and test methods can declare custom display names via @DisplayName — with spaces, special characters, and even emojis — that will be displayed in test reports and by test runners and IDEs.
 ```
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
 @DisplayName("A special test case")
 class DisplayNameDemo {
 
@@ -136,312 +179,355 @@ class DisplayNameDemo {
 
 }
 ```
-## Assertions
-JUnit Jupiter comes with many of the assertion methods that JUnit 4 has and adds a few that lend themselves well to being used with Java 8 lambdas. 
-All JUnit Jupiter assertions are static methods in the org.junit.jupiter.api.Assertions class.
-```
-import static java.time.Duration.ofMillis;
-import static java.time.Duration.ofMinutes;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTimeout;
-import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.util.concurrent.CountDownLatch;
-
-import example.domain.Person;
-import example.util.Calculator;
-
-import org.junit.jupiter.api.Test;
-
-class AssertionsDemo {
-
-    private final Calculator calculator = new Calculator();
-
-    private final Person person = new Person("Jane", "Doe");
-
-    @Test
-    void standardAssertions() {
-        assertEquals(2, calculator.add(1, 1));
-        assertEquals(4, calculator.multiply(2, 2),
-                "The optional failure message is now the last parameter");
-        assertTrue('a' < 'b', () -> "Assertion messages can be lazily evaluated -- "
-                + "to avoid constructing complex messages unnecessarily.");
-    }
-
-    @Test
-    void groupedAssertions() {
-        // In a grouped assertion all assertions are executed, and all
-        // failures will be reported together.
-        assertAll("person",
-            () -> assertEquals("Jane", person.getFirstName()),
-            () -> assertEquals("Doe", person.getLastName())
-        );
-    }
-
-    @Test
-    void dependentAssertions() {
-        // Within a code block, if an assertion fails the
-        // subsequent code in the same block will be skipped.
-        assertAll("properties",
-            () -> {
-                String firstName = person.getFirstName();
-                assertNotNull(firstName);
-
-                // Executed only if the previous assertion is valid.
-                assertAll("first name",
-                    () -> assertTrue(firstName.startsWith("J")),
-                    () -> assertTrue(firstName.endsWith("e"))
-                );
-            },
-            () -> {
-                // Grouped assertion, so processed independently
-                // of results of first name assertions.
-                String lastName = person.getLastName();
-                assertNotNull(lastName);
-
-                // Executed only if the previous assertion is valid.
-                assertAll("last name",
-                    () -> assertTrue(lastName.startsWith("D")),
-                    () -> assertTrue(lastName.endsWith("e"))
-                );
-            }
-        );
-    }
-
-    @Test
-    void exceptionTesting() {
-        Exception exception = assertThrows(ArithmeticException.class, () ->
-            calculator.divide(1, 0));
-        assertEquals("/ by zero", exception.getMessage());
-    }
-
-    @Test
-    void timeoutNotExceeded() {
-        // The following assertion succeeds.
-        assertTimeout(ofMinutes(2), () -> {
-            // Perform task that takes less than 2 minutes.
-        });
-    }
-
-    @Test
-    void timeoutNotExceededWithResult() {
-        // The following assertion succeeds, and returns the supplied object.
-        String actualResult = assertTimeout(ofMinutes(2), () -> {
-            return "a result";
-        });
-        assertEquals("a result", actualResult);
-    }
-
-    @Test
-    void timeoutNotExceededWithMethod() {
-        // The following assertion invokes a method reference and returns an object.
-        String actualGreeting = assertTimeout(ofMinutes(2), AssertionsDemo::greeting);
-        assertEquals("Hello, World!", actualGreeting);
-    }
-
-    @Test
-    void timeoutExceeded() {
-        // The following assertion fails with an error message similar to:
-        // execution exceeded timeout of 10 ms by 91 ms
-        assertTimeout(ofMillis(10), () -> {
-            // Simulate task that takes more than 10 ms.
-            Thread.sleep(100);
-        });
-    }
-
-    @Test
-    void timeoutExceededWithPreemptiveTermination() {
-        // The following assertion fails with an error message similar to:
-        // execution timed out after 10 ms
-        assertTimeoutPreemptively(ofMillis(10), () -> {
-            // Simulate task that takes more than 10 ms.
-            new CountDownLatch(1).await();
-        });
-    }
-
-    private static String greeting() {
-        return "Hello, World!";
-    }
-
-}
-```
 ## Assumptions
-JUnit Jupiter comes with a subset of the assumption methods that JUnit 4 provides and adds a few that lend themselves well to being used with Java 8 lambda expressions and method references. 
-All JUnit Jupiter assumptions are static methods in the org.junit.jupiter.api.Assumptions class.
+JUnit Jupiter comes with a subset of the assumption methods that JUnit 4 provides and adds a few that lend themselves well to being used
+with Java 8 lambda expressions and method references.
 ```
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
-import static org.junit.jupiter.api.Assumptions.assumingThat;
+    @Test
+    @DisplayName("Test student creation at only development machine")
+    @Tag("createStudent")
+    void shouldCreateStudentWithNameAndSurnameAtDevelopmentMachine() {
 
-import example.util.Calculator;
+        assumeTrue(System.getProperty("ENV") != null, "Aborting Test: System property ENV doesn't exist!");
+        assumeTrue(System.getProperty("ENV").equals("dev"), "Aborting Test: Not on a developer machine!");
 
-import org.junit.jupiter.api.Test;
+        final Student ahmet = new Student("1", "Ahmet", "Can");
+        assertAll("Student Information",
+                () -> assertEquals("Ahmet", ahmet.getName()),
+                () -> assertEquals("Can", ahmet.getSurname()),
+                () -> assertEquals("1", ahmet.getId())
+        );
+        
+        final String env = System.getProperty("ENV");
+        assumingThat(env != null && env.equals("dev"), () -> {
+            LecturerCourseRecord lecturerCourseRecord = new LecturerCourseRecord(null, null);
+            ahmet.addCourse(lecturerCourseRecord);
+            assertEquals(1, ahmet.getStudentCourseRecords().size());
+        });
+    }
+```
+## Conditional Test Execution
+JUnit Jupiter allows developers to either enable or disable a container or test based on certain conditions programmatically
+* @EnabledOnOs({OS.WINDOWS}) => Enable on Windows OS
+* @DisabledOnOs({OS.MAC}) => Disable on Mac OS
+* @EnabledOnJre(JRE.JAVA_10) => Enable for Java 10
+* @EnabledOnJre({JRE.JAVA_9, JRE.JAVA_10}) => Disable for Java 9, Java 10
+* @EnabledIf("2 * 3 == 6") // Static JavaScript expression.
+* @DisabledIf("Math.random() < 0.314159") // Dynamic JavaScript expression.
+```
+public class ConditionalStudentTest {
 
-class AssumptionsDemo {
+    @EnabledOnOs({OS.WINDOWS}) 
+    @Test
+    void shouldCreateStudentOnlyOnWindow() {
+        final Student ahmet = new Student("1", "Ahmet", "Can");
+        assertAll("Student Information",
+                () -> assertEquals("Ahmet", ahmet.getName()),
+                () -> assertEquals("Can", ahmet.getSurname()),
+                () -> assertEquals("1", ahmet.getId())
+        );
+    }
 
-    private final Calculator calculator = new Calculator();
+    @DisabledOnOs({OS.MAC})
+    @Test
+    void shouldCreateStudentOnlyOnNonMac() {
+        final Student ahmet = new Student("1", "Ahmet", "Can");
+        assertAll("Student Information",
+                () -> assertEquals("Ahmet", ahmet.getName()),
+                () -> assertEquals("Can", ahmet.getSurname()),
+                () -> assertEquals("1", ahmet.getId())
+        );
+    }
+
+    @EnabledOnJre(JRE.JAVA_10)
+    @Test
+    void shouldCreateStudentOnlyOnJRE10() {
+        final Student ahmet = new Student("1", "Ahmet", "Can");
+        assertAll("Student Information",
+                () -> assertEquals("Ahmet", ahmet.getName()),
+                () -> assertEquals("Can", ahmet.getSurname()),
+                () -> assertEquals("1", ahmet.getId())
+        );
+    }
+
+    @EnabledOnJre({JRE.JAVA_9, JRE.JAVA_10})
+    @Test
+    void shouldCreateStudentOnlyOnJRE9orJRE10() {
+        final Student ahmet = new Student("1", "Ahmet", "Can");
+        assertAll("Student Information",
+                () -> assertEquals("Ahmet", ahmet.getName()),
+                () -> assertEquals("Can", ahmet.getSurname()),
+                () -> assertEquals("1", ahmet.getId())
+        );
+    }
+
+    @DisabledOnJre(JRE.JAVA_10)
+    @Test
+    void shouldCreateStudentOnlyOnNonJRE10() {
+        final Student ahmet = new Student("1", "Ahmet", "Can");
+        assertAll("Student Information",
+                () -> assertEquals("Ahmet", ahmet.getName()),
+                () -> assertEquals("Can", ahmet.getSurname()),
+                () -> assertEquals("1", ahmet.getId())
+        );
+    }
+
+    @EnabledIfSystemProperty(named = "os.arch", matches = ".*64.*")
+    @Test
+    void shouldCreateStudentOnlyOn64Architectures() {
+        final Student ahmet = new Student("1", "Ahmet", "Can");
+        assertAll("Student Information",
+                () -> assertEquals("Ahmet", ahmet.getName()),
+                () -> assertEquals("Can", ahmet.getSurname()),
+                () -> assertEquals("1", ahmet.getId())
+        );
+    }
+
+    @DisabledIfSystemProperty(named = "ENV", matches = "dev")
+    @Test
+    void shouldCreateStudentOnlyOnDevMachine() {
+        final Student ahmet = new Student("1", "Ahmet", "Can");
+        assertAll("Student Information",
+                () -> assertEquals("Ahmet", ahmet.getName()),
+                () -> assertEquals("Can", ahmet.getSurname()),
+                () -> assertEquals("1", ahmet.getId())
+        );
+    }
+
+
+    @EnabledIfEnvironmentVariable(named = "ENV", matches = "staging-server")
+    @Test
+    void shouldCreateStudentOnlyOnStagingEnv() {
+        final Student ahmet = new Student("1", "Ahmet", "Can");
+        assertAll("Student Information",
+                () -> assertEquals("Ahmet", ahmet.getName()),
+                () -> assertEquals("Can", ahmet.getSurname()),
+                () -> assertEquals("1", ahmet.getId())
+        );
+    }
+
+    @DisabledIfEnvironmentVariable(named = "ENV", matches = "staging-server")
+    @Test
+    void shouldCreateStudentOnlyOnNonCIEnv() {
+        final Student ahmet = new Student("1", "Ahmet", "Can");
+        assertAll("Student Information",
+                () -> assertEquals("Ahmet", ahmet.getName()),
+                () -> assertEquals("Can", ahmet.getSurname()),
+                () -> assertEquals("1", ahmet.getId())
+        );
+    }
+
+    @EnabledIf("2 * 3 == 6") // Static JavaScript expression.
+    @Test
+    void shouldCreateStudentIfStaticJSExpressionIsEvaluatedToTrue() {
+        final Student ahmet = new Student("1", "Ahmet", "Can");
+        assertAll("Student Information",
+                () -> assertEquals("Ahmet", ahmet.getName()),
+                () -> assertEquals("Can", ahmet.getSurname()),
+                () -> assertEquals("1", ahmet.getId())
+        );
+    }
+
+    @DisabledIf("Math.random() < 0.314159") // Dynamic JavaScript expression.
+    @Test
+    void shouldCreateStudentIfDynamicJSExpressionIsEvaluatedToTrue() {
+        final Student ahmet = new Student("1", "Ahmet", "Can");
+        assertAll("Student Information",
+                () -> assertEquals("Ahmet", ahmet.getName()),
+                () -> assertEquals("Can", ahmet.getSurname()),
+                () -> assertEquals("1", ahmet.getId())
+        );
+    }
+
+    @DisabledIf("/64/.test(systemProperty.get('os.arch'))") // Regular expression testing bound system property.
+    @Test
+    void shouldCreateStudentOnlyOn32BitArchitectures() {
+        final Student ahmet = new Student("1", "Ahmet", "Can");
+        assertAll("Student Information",
+                () -> assertEquals("Ahmet", ahmet.getName()),
+                () -> assertEquals("Can", ahmet.getSurname()),
+                () -> assertEquals("1", ahmet.getId())
+        );
+    }
+
+    @EnabledIf("'staging-server' == systemEnvironment.get('ENV')")
+    @Test
+    void shouldCreateStudentOnlyOnStagingEnvEvaluatedWithJS() {
+        final Student ahmet = new Student("1", "Ahmet", "Can");
+        assertAll("Student Information",
+                () -> assertEquals("Ahmet", ahmet.getName()),
+                () -> assertEquals("Can", ahmet.getSurname()),
+                () -> assertEquals("1", ahmet.getId())
+        );
+    }
+
+    @TestOnWindowsWithJRE10
+    void shouldCreateStudentOnlyOnMacWithJRE10() {
+        final Student ahmet = new Student("1", "Ahmet", "Can");
+        assertAll("Student Information",
+                () -> assertEquals("Ahmet", ahmet.getName()),
+                () -> assertEquals("Can", ahmet.getSurname()),
+                () -> assertEquals("1", ahmet.getId())
+        );
+    }
+
+    @Target(ElementType.METHOD)
+    @Retention(RetentionPolicy.RUNTIME)
+    @Test
+    @EnabledOnOs(OS.WINDOWS)
+    @EnabledOnJre(JRE.JAVA_9)
+    @interface TestOnWindowsWithJRE10 {
+    }
+}
+```
+## Tagging and Filtering
+Test classes and methods can be tagged via the @Tag annotation. Those tags can later be used to filter test discovery and execution.
+```
+@Tag("fast")
+@Tag("model")
+class TaggingDemo {
 
     @Test
-    void testOnlyOnCiServer() {
-        assumeTrue("CI".equals(System.getenv("ENV")));
-        // remainder of test
+    @Tag("taxes")
+    void testingTaxCalculation() {
+    }
+
+}
+
+```
+## Nested Tests
+@Nested tests give the test writer more capabilities to express the relationship among several groups of tests. 
+Such nested tests make use of Java’s nested classes and facilitate hierarchical thinking about the test structure.
+```
+@DisplayName("A stack")
+class TestingAStackDemo {
+
+    Stack<Object> stack;
+
+    @Test
+    @DisplayName("is instantiated with new Stack()")
+    void isInstantiatedWithNew() {
+        new Stack<>();
+    }
+
+    @Nested
+    @DisplayName("when new")
+    class WhenNew {
+
+        @BeforeEach
+        void createNewStack() {
+            stack = new Stack<>();
+        }
+
+        @Test
+        @DisplayName("is empty")
+        void isEmpty() {
+            assertTrue(stack.isEmpty());
+        }
+
+        @Test
+        @DisplayName("throws EmptyStackException when popped")
+        void throwsExceptionWhenPopped() {
+            assertThrows(EmptyStackException.class, stack::pop);
+        }
+
+        @Test
+        @DisplayName("throws EmptyStackException when peeked")
+        void throwsExceptionWhenPeeked() {
+            assertThrows(EmptyStackException.class, stack::peek);
+        }
+
+        @Nested
+        @DisplayName("after pushing an element")
+        class AfterPushing {
+
+            String anElement = "an element";
+
+            @BeforeEach
+            void pushAnElement() {
+                stack.push(anElement);
+            }
+
+            @Test
+            @DisplayName("it is no longer empty")
+            void isNotEmpty() {
+                assertFalse(stack.isEmpty());
+            }
+
+            @Test
+            @DisplayName("returns the element when popped and is empty")
+            void returnElementWhenPopped() {
+                assertEquals(anElement, stack.pop());
+                assertTrue(stack.isEmpty());
+            }
+
+            @Test
+            @DisplayName("returns the element when peeked but remains not empty")
+            void returnElementWhenPeeked() {
+                assertEquals(anElement, stack.peek());
+                assertFalse(stack.isEmpty());
+            }
+        }
+    }
+}
+```
+## Dependency Injection for Constructors and Methods
+In all prior JUnit versions, test constructors or methods were not allowed to have parameters (at least not with the standard Runner implementations). As one of the major changes in JUnit Jupiter, both test constructors and methods are now permitted to have parameters. This allows for greater flexibility and enables Dependency Injection for constructors and methods.
+```
+@DisplayName("TestInfo Demo")
+class TestInfoDemo {
+
+    TestInfoDemo(TestInfo testInfo) {
+        assertEquals("TestInfo Demo", testInfo.getDisplayName());
+    }
+
+    @BeforeEach
+    void init(TestInfo testInfo) {
+        String displayName = testInfo.getDisplayName();
+        assertTrue(displayName.equals("TEST 1") || displayName.equals("test2()"));
     }
 
     @Test
-    void testOnlyOnDeveloperWorkstation() {
-        assumeTrue("DEV".equals(System.getenv("ENV")),
-            () -> "Aborting test: not on developer workstation");
-        // remainder of test
+    @DisplayName("TEST 1")
+    @Tag("my-tag")
+    void test1(TestInfo testInfo) {
+        assertEquals("TEST 1", testInfo.getDisplayName());
+        assertTrue(testInfo.getTags().contains("my-tag"));
     }
 
     @Test
-    void testInAllEnvironments() {
-        assumingThat("CI".equals(System.getenv("ENV")),
-            () -> {
-                // perform these assertions only on the CI server
-                assertEquals(2, calculator.divide(4, 2));
-            });
-
-        // perform these assertions in all environments
-        assertEquals(42, calculator.multiply(6, 7));
+    void test2() {
     }
 
 }
-```
-## Disabling Tests
-Entire test classes or individual test methods may be disabled via the @Disabled annotation,
-via one of the annotations discussed in Conditional Test Execution, or via a custom ExecutionCondition.
-```
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 
-class DisabledTestsDemo {
+class TestReporterDemo {
 
-    @Disabled("Disabled until bug #42 has been resolved")
     @Test
-    void testWillBeSkipped() {
+    void reportSingleValue(TestReporter testReporter) {
+        testReporter.publishEntry("a status message");
     }
 
     @Test
-    void testWillBeExecuted() {
+    void reportKeyValuePair(TestReporter testReporter) {
+        testReporter.publishEntry("a key", "a value");
+    }
+
+    @Test
+    void reportMultipleKeyValuePairs(TestReporter testReporter) {
+        Map<String, String> values = new HashMap<>();
+        values.put("user name", "dk38");
+        values.put("award year", "1974");
+
+        testReporter.publishEntry(values);
     }
 
 }
 ```
-## Conditional execution based on operating system and architecture
-```
-@Test
-@EnabledOnOs(MAC)
-void onlyOnMacOs() {
-    // ...
-}
 
-@TestOnMac
-void testOnMac() {
-    // ...
-}
 
-@Test
-@EnabledOnOs({ LINUX, MAC })
-void onLinuxOrMac() {
-    // ...
-}
 
-@Test
-@DisabledOnOs(WINDOWS)
-void notOnWindows() {
-    // ...
-}
 
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
-@Test
-@EnabledOnOs(MAC)
-@interface TestOnMac {
-}
-@Test
-@EnabledOnOs(architectures = "aarch64")
-void onAarch64() {
-    // ...
-}
 
-@Test
-@DisabledOnOs(architectures = "x86_64")
-void notOnX86_64() {
-    // ...
-}
-
-@Test
-@EnabledOnOs(value = MAC, architectures = "aarch64")
-void onNewMacs() {
-    // ...
-}
-
-@Test
-@DisabledOnOs(value = MAC, architectures = "aarch64")
-void notOnNewMacs() {
-    // ...
-}
-```
-## Java Runtime Environment Conditions
-```
-@Test
-@EnabledOnJre(JAVA_8)
-void onlyOnJava8() {
-    // ...
-}
-
-@Test
-@EnabledOnJre({ JAVA_9, JAVA_10 })
-void onJava9Or10() {
-    // ...
-}
-
-@Test
-@EnabledForJreRange(min = JAVA_9, max = JAVA_11)
-void fromJava9to11() {
-    // ...
-}
-
-@Test
-@EnabledForJreRange(min = JAVA_9)
-void fromJava9toCurrentJavaFeatureNumber() {
-    // ...
-}
-
-@Test
-@EnabledForJreRange(max = JAVA_11)
-void fromJava8To11() {
-    // ...
-}
-
-@Test
-@DisabledOnJre(JAVA_9)
-void notOnJava9() {
-    // ...
-}
-
-@Test
-@DisabledForJreRange(min = JAVA_9, max = JAVA_11)
-void notFromJava9to11() {
-    // ...
-}
-
-@Test
-@DisabledForJreRange(min = JAVA_9)
-void notFromJava9toCurrentJavaFeatureNumber() {
-    // ...
-}
-
-@Test
-@DisabledForJreRange(max = JAVA_11)
-void notFromJava8to11() {
-    // ...
-}
-```
 
 
