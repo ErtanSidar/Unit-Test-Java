@@ -135,7 +135,7 @@ public class ConditionalStudentTest {
         );
     }
 
-    @DisabledIf("/32/.test(systemProperty.get('os.arch'))") // Regular expression testing bound system property.
+    @DisabledIf("/64/.test(systemProperty.get('os.arch'))") // Regular expression testing bound system property.
     @Test
     void shouldCreateStudentOnlyOn32BitArchitectures() {
         final Student ahmet = new Student("1", "Ahmet", "Can");
