@@ -3,6 +3,7 @@ package com.essoft.unittest.junit.basic.courseRecord.model;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;

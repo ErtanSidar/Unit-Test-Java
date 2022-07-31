@@ -1,6 +1,14 @@
 package com.essoft.unittest.junit.basic.courseRecord.model;
 
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+
+import java.util.Set;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 public class StudentTestWithTestInstancePostProcessor {
 
